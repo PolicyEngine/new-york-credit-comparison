@@ -1,46 +1,20 @@
+# format.py
+
 import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
-from constants import GREY, TEAL_ACCENT, ORANGE_ACCENT
+from constants import colors
 
 
 def render_results(results, results_df):
-    """Visualization function that shows tax credit values and net income changes."""
+    """Visualization function that shows net income changes only."""
     if results_df.empty:
         st.warning("No results to display. Please run the simulation first.")
         return
 
     # Process dataframe
     df = prepare_data(results_df)
-
-    # Show tax credit values
-    st.subheader("Tax Credit Values")
-    credit_fig = create_bar_chart(
-        df,
-        metrics={
-            "Current Law": {
-                "column": "baseline_ctc",
-                "year": 2024,
-                "color": GREY,
-                "label": "Current ESCC",
-            },
-            "Hochul": {
-                "column": "ctc_value",
-                "years": [2025, 2026],
-                "color": TEAL_ACCENT,
-                "label": "Hochul's ESCC Expansion",
-            },
-            "WFTC": {
-                "column": "wftc_value",
-                "years": [2025, 2026, 2029],
-                "color": ORANGE_ACCENT,
-                "label": "WFTC Proposal",
-            },
-        },
-        y_title="Credit Amount ($)",
-    )
-    st.plotly_chart(credit_fig, use_container_width=False)
 
     # Show net income changes
     st.subheader("Net Income Change")
@@ -50,13 +24,13 @@ def render_results(results, results_df):
             "Hochul": {
                 "column": "ctc_change",
                 "years": [2025, 2026],
-                "color": TEAL_ACCENT,
+                "color": colors["TEAL_ACCENT"],
                 "label": "Hochul's ESCC Expansion",
             },
             "WFTC": {
                 "column": "wftc_change",
                 "years": [2025, 2026, 2029],
-                "color": ORANGE_ACCENT,
+                "color": colors["BLUE"],  # Example color choice
                 "label": "WFTC Proposal",
             },
         },
@@ -86,7 +60,6 @@ def prepare_data(results_df):
 
     # Fill NaN values with 0
     df = df.fillna(0)
-
     return df
 
 
@@ -99,7 +72,7 @@ def create_bar_chart(df, metrics, y_title):
             {
                 "Policy Name": {
                     "column": column_name,
-                    "years": [list of years] or "year": single_year,
+                    "years": [list of years],
                     "color": color_code,
                     "label": legend_label
                 }
@@ -113,11 +86,7 @@ def create_bar_chart(df, metrics, y_title):
 
     # Process each policy metric
     for policy_name, config in metrics.items():
-        # Handle either single year or multiple years
         years = config.get("years", [])
-        if "year" in config:
-            years = [config["year"]]
-
         column = config["column"]
         color = config["color"]
         label = config.get("label", policy_name)
@@ -129,7 +98,6 @@ def create_bar_chart(df, metrics, y_title):
         # Add a bar for each year
         for year in years:
             value = extract_value(df, year, column)
-
             x_label = f"{label.split(' ')[0]} {year}" if year != 2024 else label
 
             fig.add_trace(
@@ -154,7 +122,6 @@ def create_bar_chart(df, metrics, y_title):
 
     # Create custom legend
     legend_colors = {policy: config["color"] for policy, config in metrics.items()}
-
     for policy in legend_items:
         fig.add_trace(
             go.Bar(
@@ -186,7 +153,9 @@ def extract_value(df, year, column):
     if year in df["year"].values and column in df.columns:
         data = df[df["year"] == year]
         if not data.empty:
-            value = data[column].values[0]
-            if pd.isna(value) or not isinstance(value, (int, float)):
-                value = 0
+            val = data[column].values[0]
+            import pandas as pd
+            if pd.isna(val) or not isinstance(val, (int, float)):
+                val = 0
+            value = val
     return value
