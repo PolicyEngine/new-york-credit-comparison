@@ -1,8 +1,11 @@
 streamlit
+pandas
+matplotlib
+policyengine-us
+pyyaml
+setuptools
+black
+IPython
 plotly
 numpy
-pandas
-pyyaml
-policyengine_us
-policyengine_core
-setuptools
+tabulate
