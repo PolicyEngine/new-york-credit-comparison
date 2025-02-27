@@ -3,3 +3,5 @@ plotly
 numpy
 pandas
 pyyaml
+policyengine_us
+policyengine_core
