@@ -1,21 +1,28 @@
+# app.py
+
 import streamlit as st
 from inputs import render_household_inputs
 from simulation import run_simulations
 from format import render_results
-from constants import TEAL_ACCENT
+from constants import colors
 
 
 def set_page_config():
     st.set_page_config(
-        page_title="NY WFTC and ESCC Expansion Calculator", page_icon="📊"
+        page_title="NY WFTC and ESCC Expansion Calculator", 
+        page_icon="📊"
     )
 
     # App title and description
     st.markdown(
         f"""
         <h1 style="font-family: Roboto;">
-            <span style="color: {TEAL_ACCENT}; font-weight: bold;"> NY WFTC and ESCC Expansion</span>
-            <span style="color: {TEAL_ACCENT}; font-weight: normal;"> Calculator</span>
+            <span style="color: {colors["TEAL_ACCENT"]}; font-weight: bold;">
+                NY WFTC and ESCC Expansion
+            </span>
+            <span style="color: {colors["TEAL_ACCENT"]}; font-weight: normal;">
+                Calculator
+            </span>
         </h1>
         """,
         unsafe_allow_html=True,
@@ -24,6 +31,19 @@ def set_page_config():
         "Compare the impact of WFTC and the ESCC expansion proposals on New York households across different years."
     )
     st.divider()
+
+    # Inject custom CSS for the "Calculate" primary button
+    st.markdown(
+        f"""
+        <style>
+        div.stButton > button:first-child {{
+            background-color: {colors["BLUE"]} !important;
+            color: {colors["WHITE"]} !important;
+        }}
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 def main():
@@ -65,7 +85,7 @@ def main():
         - Minimum benefit of $100 per child starting in 2026:
         - Phases out the NY EITC over 5 years
         - Limits the dependent exemption to those ineligible for the WFTC
-        
+
         ### Empire State Child Credit Expansion
         The enhanced ESSC reform includes:
         - Increasing benefit amounts:
